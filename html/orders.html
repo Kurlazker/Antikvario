@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказы — Антиквар</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@400;600;700&family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=11">
+</head>
+<body class="admin-page">
+
+    <header class="header header--admin">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <span class="logo__icon">⚜</span>
+                    <span class="logo__text">Антиквар — Заказы</span>
+                </div>
+                <nav class="header__nav">
+                    <a href="/" class="nav__link">🏠 Сайт</a>
+                    <a href="/admin" class="nav__link">📦 Товары</a>
+                    <a href="/orders" class="nav__link nav__link--active">📋 Заказы</a>
+                    <a href="/logout" class="nav__link nav__link--logout">Выйти ({{ username }})</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <section class="admin-section">
+            <h2 class="admin-title">📋 История заказов</h2>
+
+            {% if orders %}
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>№ Заказа</th>
+                            <th>Дата и время</th>
+                            <th>Клиент</th>
+                            <th>Телефон</th>
+                            <th>Логин</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        {% for order in orders %}
+                        <tr data-order-id="{{ order.id }}">
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>{{ order.datetime }}</td>
+                            <td>{{ order.client }}</td>
+                            <td>{{ order.phone }}</td>
+                            <td>{{ order.login }}</td>
+                            <td><strong style="color: #C9A961;">{{ order.total }} Br</strong></td>
+                            <td>
+                                <span class="order-status order-status--{{ order.status|lower }}" id="status-{{ order.id }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="order-details-btn" data-order-id="{{ order.id }}">
+                                    Подробнее
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="admin-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Всего заказов:</span>
+                    <span class="summary-value">{{ orders|length }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Общая сумма:</span>
+                    <span class="summary-value summary-value--gold">
+                        {{ orders|sum(attribute='total') }} Br
+                    </span>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state__icon"></div>
+                <h3>Заказов пока нет</h3>
+                <p>Здесь будут отображаться все оформленные заказы</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Модальное окно деталей заказа -->
+    <div class="order-modal" id="orderModal">
+        <div class="order-modal__overlay" id="orderModalOverlay"></div>
+        <div class="order-modal__content">
+            <button class="order-modal__close" id="orderModalClose">✕</button>
+            
+            <div class="order-modal__header">
+                <h2 class="order-modal__title">Заказ #<span id="modalOrderId"></span></h2>
+                <span class="order-status" id="modalOrderStatus"></span>
+            </div>
+            
+            <div class="order-modal__body">
+                <div class="order-modal__info">
+                    <div class="info-block">
+                        <h4>👤 Клиент</h4>
+                        <p><strong>Имя:</strong> <span id="modalClient"></span></p>
+                        <p><strong>Телефон:</strong> <span id="modalPhone"></span></p>
+                        <p><strong>Логин:</strong> <span id="modalLogin"></span></p>
+                    </div>
+                    
+                    <div class="info-block">
+                        <h4>📅 Информация о заказе</h4>
+                        <p><strong>Дата:</strong> <span id="modalDatetime"></span></p>
+                        <p><strong>Комментарий:</strong> <span id="modalComment"></span></p>
+                    </div>
+                </div>
+                
+                <div class="order-modal__products">
+                    <h4>🛒 Состав заказа</h4>
+                    <div id="modalProducts" class="modal-products-list"></div>
+                    
+                    <div class="order-modal__total">
+                        <span>Итого:</span>
+                        <strong id="modalTotal"></strong>
+                    </div>
+                </div>
+
+                <!-- Управление статусом -->
+                <div class="order-modal__status-control">
+                    <h4>⚙️ Управление статусом</h4>
+                    <div class="status-selector">
+                        <select id="statusSelect" class="status-select">
+                            <option value="Новый">Новый</option>
+                            <option value="В обработке">В обработке</option>
+                            <option value="Выполнен">Выполнен</option>
+                            <option value="Отменён">Отменён</option>
+                        </select>
+                        <button class="status-save-btn" id="saveStatusBtn">Сохранить статус</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Функция уведомлений
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 100000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            ${type === 'success' ? 'background: #27ae60;' : 'background: #e74c3c;'}
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    let currentOrderId = null;
+
+    function closeOrderModal() {
+        const modal = document.getElementById('orderModal');
+        modal.classList.remove('active');
+        document.body.classList.remove('modal-open');
+        currentOrderId = null;
+    }
+
+    function showOrderDetails(orderId) {
+        currentOrderId = parseInt(orderId);
+        const modal = document.getElementById('orderModal');
+        modal.classList.add('active');
+        document.body.classList.add('modal-open');
+
+        fetch('/order_details/' + currentOrderId)
+            .then(r => r.json())
+            .then(order => {
+                if (order.error) {
+                    showToast('❌ ' + order.error, 'error');
+                    closeOrderModal();
+                    return;
+                }
+
+                document.getElementById('modalOrderId').textContent = order.id;
+                document.getElementById('modalClient').textContent = order.client;
+                document.getElementById('modalPhone').textContent = order.phone;
+                document.getElementById('modalLogin').textContent = order.login;
+                document.getElementById('modalDatetime').textContent = order.datetime;
+                document.getElementById('modalComment').textContent = order.comment || '—';
+                document.getElementById('modalTotal').textContent = order.total + ' Br';
+
+                const statusEl = document.getElementById('modalOrderStatus');
+                statusEl.textContent = order.status;
+                statusEl.className = 'order-status order-status--' + order.status.toLowerCase();
+
+                document.getElementById('statusSelect').value = order.status;
+
+                const productsContainer = document.getElementById('modalProducts');
+                if (order.products && order.products.length > 0) {
+                    let html = '';
+                    order.products.forEach(product => {
+                        html += '<div class="modal-product-item">';
+                        html += '<img src="' + product.image + '" alt="' + product.name + '" class="modal-product__image">';
+                        html += '<div class="modal-product__info">';
+                        html += '<h5>ID: ' + product.id + ' — ' + product.name + '</h5>';
+                        html += '<p class="modal-product__category">' + product.category + '</p>';
+                        html += '<p class="modal-product__price">' + product.price + ' Br × ' + product.quantity + ' = <strong>' + product.total + ' Br</strong></p>';
+                        html += '</div></div>';
+                    });
+                    productsContainer.innerHTML = html;
+                } else {
+                    productsContainer.innerHTML = '<p>Нет информации о товарах</p>';
+                }
+            })
+            .catch(err => {
+                console.error('Ошибка загрузки деталей заказа:', err);
+                showToast('Не удалось загрузить детали заказа', 'error');
+                closeOrderModal();
+            });
+    }
+
+    // Сохранение нового статуса
+    document.getElementById('saveStatusBtn').addEventListener('click', function() {
+        if (!currentOrderId) return;
+        
+        const newStatus = document.getElementById('statusSelect').value;
+        
+        fetch('/update_order_status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_id: currentOrderId, status: newStatus })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const statusEl = document.getElementById('modalOrderStatus');
+                statusEl.textContent = newStatus;
+                statusEl.className = 'order-status order-status--' + newStatus.toLowerCase();
+                
+                const tableStatusEl = document.getElementById('status-' + currentOrderId);
+                if (tableStatusEl) {
+                    tableStatusEl.textContent = newStatus;
+                    tableStatusEl.className = 'order-status order-status--' + newStatus.toLowerCase();
+                }
+                
+                showToast('✅ Статус заказа #' + currentOrderId + ' обновлён на "' + newStatus + '"', 'success');
+            } else {
+                showToast('❌ Ошибка: ' + data.error, 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Ошибка сохранения статуса:', err);
+            showToast('Не удалось сохранить статус', 'error');
+        });
+    });
+
+    document.getElementById('ordersTableBody').addEventListener('click', function(e) {
+        const btn = e.target.closest('.order-details-btn');
+        if (btn) {
+            const orderId = btn.getAttribute('data-order-id');
+            showOrderDetails(orderId);
+        }
+    });
+
+    document.getElementById('orderModalOverlay').addEventListener('click', closeOrderModal);
+    document.getElementById('orderModalClose').addEventListener('click', closeOrderModal);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeOrderModal();
+        }
+    });
+</script>
+<script src="/js/counters.js"></script>
+</body>
+</html>
