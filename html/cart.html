@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина — Антиквар</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@400;600;700&family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=9">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <span class="logo__icon">⚜</span>
+                    <span class="logo__text">Антиквар</span>
+                </div>
+                <nav class="header__nav">
+                    <a href="/" class="nav__link">🏠 На главную</a>
+                    <a href="/favorites" class="nav__link nav__icon-link">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        <span class="badge-count" id="favCount">0</span>
+                    </a>
+                    <a href="/cart" class="nav__link nav__icon-link nav__link--active">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="badge-count" id="cartCount">0</span>
+                    </a>
+                    {% if username %}
+                    <a href="/logout" class="nav__link nav__link--logout" onclick="localStorage.removeItem('antique_cart'); localStorage.removeItem('antique_favorites');">Выйти ({{ username }})</a>
+                    {% else %}
+                    <a href="/login" class="nav__link">Войти</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-container">
+        <div class="container">
+            <h1 class="page-title">🛒 Корзина</h1>
+            
+            <div class="cart-layout">
+                <div class="cart-items" id="cartItems">
+                    <!-- Товары загружаются через JS -->
+                </div>
+                
+                <div class="cart-summary">
+                    <h3 class="cart-summary__title">Ваш заказ</h3>
+                    <div class="cart-summary__row">
+                        <span>Товаров:</span>
+                        <span id="totalItems">0</span>
+                    </div>
+                    <div class="cart-summary__row cart-summary__row--total">
+                        <span>Итого:</span>
+                        <span id="totalPrice">0 Br</span>
+                    </div>
+                    
+                    <button class="checkout-btn" id="checkoutBtn" disabled>Оформить заказ</button>
+                    
+                    <form class="checkout-form" id="checkoutForm" style="display: none;" method="POST" action="/checkout">
+                        <h4>Данные для связи</h4>
+                        <input type="text" name="name" placeholder="Ваше имя" required>
+                        <input type="tel" name="phone" placeholder="Телефон" required>
+                        <textarea name="comment" placeholder="Комментарий (необязательно)" rows="3"></textarea>
+                        <input type="hidden" name="cart_data" id="cartDataInput">
+                        <input type="hidden" name="total" id="totalInput">
+                        <button type="submit" class="checkout-btn checkout-btn--confirm">Подтвердить заказ</button>
+                        <button type="button" class="checkout-btn checkout-btn--cancel" id="cancelCheckout">Отмена</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="empty-cart" id="emptyCart" style="display: none;">
+                <div class="empty-cart__icon">🛍️</div>
+                <h2>Корзина пуста</h2>
+                <p>Добавьте товары из каталога</p>
+                <a href="/" class="empty-cart__link">Перейти в каталог</a>
+            </div>
+        </div>
+    </div>
+
+       <!-- Простой флаг авторизации -->
+    <div id="server-logged-in" data-logged-in="{{ 'true' if is_logged_in else 'false' }}" style="display: none;"></div>
+
+    <script>
+        const loggedInEl = document.getElementById('server-logged-in');
+        window.IS_LOGGED_IN = loggedInEl ? loggedInEl.dataset.loggedIn === 'true' : false;
+    </script>
+
+
+    <script src="/js/counters.js"></script>
+    <script src="/js/cart.js"></script>
+</body>
+</html>

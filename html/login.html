@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Антиквар</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@400;600;700&family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=9">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <span class="logo__icon" style="font-size: 48px;">⚜</span>
+                <h1 class="login-title">Вход в аккаунт</h1>
+                <p class="login-subtitle">Антикварный салон «Антиквар»</p>
+            </div>
+            
+            {% if error %}
+            <div class="alert alert--error">{{ error }}</div>
+            {% endif %}
+            
+            <form class="login-form" method="POST" action="/login">
+                <div class="form-group">
+                    <label for="login">Логин *</label>
+                    <input type="text" id="login" name="login" placeholder="Введите логин" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль *</label>
+                    <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+                </div>
+                
+                <button type="submit" class="login-button">Войти</button>
+            </form>
+            
+            <div class="login-footer">
+                <p class="register-link">Нет аккаунта? <a href="/register">Зарегистрируйтесь!</a></p>
+                <p style="margin-top: 15px;"><a href="/">← Вернуться на сайт</a></p>
+            </div>
+            
+        </div>
+    </div>
+    
+</body>
+</html>

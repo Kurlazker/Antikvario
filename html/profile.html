@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль — Антиквар</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@400;600;700&family=Lora:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css?v=8">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__logo">
+                    <span class="logo__icon">⚜</span>
+                    <span class="logo__text">Антиквар</span>
+                </div>
+                <nav class="header__nav">
+                    <a href="/" class="nav__link">Главная</a>
+                    <a href="/cart" class="nav__link nav__icon-link">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="badge-count" id="cartCount">0</span>
+                    </a>
+                    <a href="/favorites" class="nav__link nav__icon-link">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        <span class="badge-count" id="favCount">0</span>
+                    </a>
+                    <a href="/profile" class="nav__link nav__link--active">👤 {{ username }}</a>
+                    {% if user_role == 'admin' %}
+                    <a href="/admin" class="nav__link">⚙️ Админ</a>
+                    {% endif %}
+                    <a href="/logout" class="nav__link nav__link--logout">Выйти</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-container">
+        <div class="container">
+            <h1 class="page-title"> Мой профиль</h1>
+            
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <span style="font-size: 60px;">👤</span>
+                    </div>
+                    <div class="profile-details">
+                        <h2>{{ user.name }}</h2>
+                        <p>📧 {{ user.email }}</p>
+                        <p> {{ user.phone if user.phone else 'Не указан' }}</p>
+                        <p> Дата регистрации: {{ user.registered }}</p>
+                        <p>🏷️ Роль: <strong>{{ 'Администратор' if user.role == 'admin' else 'Клиент' }}</strong></p>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    {% if user.role == 'admin' %}
+                    <a href="/admin" class="profile-btn">⚙️ Админ-панель</a>
+                    <a href="/orders" class="profile-btn">📋 Заказы</a>
+                    {% endif %}
+                    <a href="/" class="profile-btn profile-btn--primary">🛍️ В каталог</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/counters.js"></script>
+    
+</body>
+</html>

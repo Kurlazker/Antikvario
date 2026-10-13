@@ -1,0 +1,44 @@
+{
+  "3": {
+    "cart": {
+      "5": {
+        "quantity": 1
+      },
+      "6": {
+        "quantity": 1
+      }
+    },
+    "favorites": [
+      2,
+      4
+    ]
+  },
+  "2": {
+    "cart": {
+      "2": {
+        "quantity": 1
+      },
+      "5": {
+        "quantity": 1
+      }
+    },
+    "favorites": [
+      5
+    ]
+  },
+  "4": {
+    "favorites": [
+      2
+    ]
+  },
+  "1": {
+    "cart": {
+      "2": {
+        "quantity": 4
+      }
+    },
+    "favorites": [
+      2
+    ]
+  }
+}
